@@ -1,15 +1,20 @@
 "use client";
 
 import {Loader2} from "lucide-react";
+import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
+import {toast} from "sonner";
 import FooterLink from "@/components/footer-link";
 import CountriesSelectField from "@/components/forms/countries-select-field";
 import InputField from "@/components/forms/input-field";
 import SelectField from "@/components/forms/select-field";
 import {Button} from "@/components/ui/button";
+import {signUpWithEmail} from "@/lib/actions/sign-in";
 import {INVESTMENT_GOALS, PREFERRED_INDUSTRIES, RISK_TOLERANCE_OPTIONS,} from "@/lib/constants";
+import {logger} from "@/lib/logger";
 
 const SignUpPage = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -30,9 +35,19 @@ const SignUpPage = () => {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      console.log(data);
+      const { success } = await signUpWithEmail(data);
+
+      if (success) {
+        toast.success("Account created successfully");
+        router.push("/");
+      }
     } catch (err) {
-      console.log(err);
+      logger.error(err);
+
+      toast.error("Sign up failed", {
+        description:
+          err instanceof Error ? err.message : "Please, try again later!",
+      });
     }
   };
 

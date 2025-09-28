@@ -1,15 +1,24 @@
+import {headers} from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
+import {redirect} from "next/navigation";
 import type {ReactNode} from "react";
+import {auth} from "@/lib/better-auth/auth";
 
-const AuthLayout = ({ children }: { children: ReactNode }) => {
+const AuthLayout = async ({ children }: { children: ReactNode }) => {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (session) {
+    redirect("/");
+  }
+
   return (
     <main className="auth-layout">
       <section className="auth-left-section scrollbar-hide-default">
         <Link href="/" className="auth-logo">
           <Image
             src="/assets/icons/logo.svg"
-            alt="Signalist Logo"
+            alt={`${process.env.NEXT_PUBLIC_APP_NAME} Logo`}
             width={140}
             height={32}
             className="h-8 w-auto"
@@ -21,8 +30,9 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
       <section className="auth-right-section">
         <div className="z-10 relative lg:mt-4 lg:mb-16">
           <blockquote className="auth-blockquote">
-            Signalist turned my watchlist into a winning list. The alerts are
-            spot-on, and I feel more confident making moves in the market
+            {process.env.NEXT_PUBLIC_APP_NAME} turned my watchlist into a
+            winning list. The alerts are spot-on, and I feel more confident
+            making moves in the market
           </blockquote>
           <div className="flex items-center justify-between">
             <div>

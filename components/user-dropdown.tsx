@@ -13,16 +13,14 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {signOut} from "@/lib/actions/sign-in";
 
-const user = {
-  name: "Han Solo",
-  email: "han.solo@starwars.com",
-};
-
-export default function UserDropdown() {
+export default function UserDropdown({ user }: { user: User }) {
   const router = useRouter();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    await signOut();
+
     router.push("/sign-in");
   };
 

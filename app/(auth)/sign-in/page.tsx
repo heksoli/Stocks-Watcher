@@ -1,12 +1,17 @@
 "use client";
 
 import {Loader2} from "lucide-react";
+import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
+import {toast} from "sonner";
 import FooterLink from "@/components/footer-link";
 import InputField from "@/components/forms/input-field";
 import {Button} from "@/components/ui/button";
+import {signIn} from "@/lib/actions/sign-in";
+import {logger} from "@/lib/logger";
 
 const SignInPage = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -21,15 +26,24 @@ const SignInPage = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      console.log(data);
+      const { success } = await signIn(data);
+      if (success) {
+        router.push("/");
+      } else {
+        toast.error("Invalid email or password");
+      }
     } catch (err) {
-      console.log(err);
+      logger.error(err);
+
+      toast.error("Invalid email or password");
     }
   };
 
   return (
     <>
-      <h1 className="form-title">Login Into Signalist</h1>
+      <h1 className="form-title">
+        Login Into {process.env.NEXT_PUBLIC_APP_NAME}
+      </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <InputField
           name="email"

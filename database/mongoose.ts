@@ -38,4 +38,6 @@ export const connectToCluster = async () => {
     cached.promise = null;
     throw err;
   }
+
+  return cached.conn;
 };
